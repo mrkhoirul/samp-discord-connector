@@ -137,16 +137,31 @@ else()
 	target_link_libraries(discord-connector CONAN_PKG::openssl)
 endif()
 
-target_link_libraries(discord-connector log-core CONAN_PKG::fmt OMP-SDK)
-
 if(UNIX)
 	if(NOT APPLE)
 		target_link_libraries(discord-connector rt)
 	endif()
-	
+
+	# Resolve the C++ runtime from the static archive *before* log-core2.so is
+	# scanned. log-core2.so exports its own copy of the std::random_device
+	# symbols, so if it is listed first GNU ld accepts them as satisfied and
+	# never pulls random.o out of libstdc++.a. The plugin then only loads when
+	# paired with that exact log-core2.so build, and dies with
+	# "undefined symbol: _ZNSt13random_device7_M_initE..." on servers still
+	# running an older log-core2.so.
+	execute_process(
+		COMMAND ${CMAKE_CXX_COMPILER} -m32 -print-file-name=libstdc++.a
+		OUTPUT_VARIABLE DCC_LIBSTDCPP_A
+		OUTPUT_STRIP_TRAILING_WHITESPACE)
+	if(EXISTS "${DCC_LIBSTDCPP_A}")
+		target_link_libraries(discord-connector ${DCC_LIBSTDCPP_A})
+	endif()
+
 	set_target_properties(discord-connector PROPERTIES
 		INSTALL_RPATH "$ORIGIN/..:$ORIGIN/")
 endif()
+
+target_link_libraries(discord-connector log-core CONAN_PKG::fmt OMP-SDK)
 
 # increase warning levels
 if (MSVC)

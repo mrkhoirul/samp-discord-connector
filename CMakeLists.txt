@@ -51,10 +51,10 @@ elseif(UNIX)
 
 	# link runtime statically
 	set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-	add_link_options(
-		"-static-libgcc"
-		"-static-libstdc++"
-	)
+	# NOTE: do NOT use add_link_options() here. It emits the flags *before* the
+	# object files, so GNU ld scans libstdc++.a while there are still no
+	# undefined symbols and pulls nothing -> 'undefined symbol: _M_init' at
+	# dlopen time. The flags are added in src/CMakeLists.txt after the objects.
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath='$ORIGIN' -static-libstdc++ -static-libgcc")
 endif()
 
