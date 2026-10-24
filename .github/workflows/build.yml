@@ -59,7 +59,7 @@ jobs:
     - if: runner.os == 'Windows'
       name: Install boost (32-bit)
       run: |
-          $Url = "https://archives.boost.io/release/1.83.0/binaries/boost_1_83_0-msvc-14.3-32.exe"
+          $Url = "https://archives.boost.io/release/1.73.0/binaries/boost_1_73_0-msvc-14.2-32.exe"
           (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost32.exe")
           Start-Process -Wait -FilePath "$env:TEMP\boost32.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=C:\hostedtoolcache\windows\Boost32"
 
@@ -67,7 +67,7 @@ jobs:
       name: Set boost env
       run: |
           echo "BOOST_ROOT=C:/hostedtoolcache/windows/Boost32" >> $env:GITHUB_ENV
-          echo "BOOST_LIBRARYDIR=C:/hostedtoolcache/windows/Boost32/lib32-msvc-14.3" >> $env:GITHUB_ENV
+          echo "BOOST_LIBRARYDIR=C:/hostedtoolcache/windows/Boost32/lib32-msvc-14.2" >> $env:GITHUB_ENV
 
     - if: runner.os == 'Windows'
       name: Install openssl
