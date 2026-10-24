@@ -179,7 +179,7 @@ add_custom_command(
 		${PROJECT_SOURCE_DIR}/LICENSE
 		${CMAKE_BINARY_DIR}/artifact/LICENSE)
 
-if(GH_ACBUILD AND UNIX)
+if(GH_ACBUILD AND UNIX AND FALSE)
 add_custom_command(
     TARGET discord-connector POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
